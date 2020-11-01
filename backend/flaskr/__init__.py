@@ -48,6 +48,9 @@ def create_app(test_config=None):
   '''
   @app.route('/categories')
   def get_all_categories():
+    '''
+      return all categories in json format
+    '''
     selection = Category.query.order_by(Category.id).all()
     categories = [category.type for category in selection]
 
@@ -75,6 +78,11 @@ def create_app(test_config=None):
   '''
   @app.route('/questions')
   def get_questions():
+    '''
+      This endpoint should return a list of questions, 
+      number of total questions, current category, categories.
+      including pagination (every 10 questions).
+    '''
     response = {
       'success': True
     }
@@ -96,6 +104,14 @@ def create_app(test_config=None):
 
   @app.route('/categories/<category_id>/questions')
   def get_category_questions(category_id):
+    '''
+      This endpoint should return a list of questions of category <category_id>, 
+      number of total questions, current category, categories.
+      including pagination (every 10 questions).
+
+      params:
+      category_id (str): ID of the selected category 
+    '''
     response = {
       'success': True
     }
@@ -119,8 +135,6 @@ def create_app(test_config=None):
     return jsonify(response)
     
 
-  
-
   '''
   @TODO: 
   Create an endpoint to DELETE question using a question ID. 
@@ -130,6 +144,9 @@ def create_app(test_config=None):
   '''
   @app.route('/questions/<int:question_id>', methods=['DELETE'])
   def delete_question(question_id):
+    '''
+      This endpoint to DELETE question using a question ID.
+    '''
     try:
       question = Question.query.filter(Question.id == question_id).one_or_none()
 
@@ -160,6 +177,11 @@ def create_app(test_config=None):
   '''
   @app.route('/questions', methods=['POST'])
   def add_question():
+    '''
+      an endpoint to get questions based on a search term or 
+      POST a new question, which will require the question and answer text, 
+      category, and difficulty score.
+    '''
     body = request.get_json()
       
     question = body.get('question', None)
@@ -208,17 +230,6 @@ def create_app(test_config=None):
 
   '''
   @TODO: 
-  Create a GET endpoint to get questions based on category. 
-
-  TEST: In the "List" tab / main screen, clicking on one of the 
-  categories in the left column will cause only questions of that 
-  category to be shown. 
-  '''
-
-
-
-  '''
-  @TODO: 
   Create a POST endpoint to get questions to play the quiz. 
   This endpoint should take category and previous question parameters 
   and return a random questions within the given category, 
@@ -231,6 +242,13 @@ def create_app(test_config=None):
   @app.route('/quizzes', methods=['POST'])
   @app.route('/quizzes/<category_id>', methods=['POST'])
   def get_question(category_id=None):
+    '''
+      a POST endpoint to get questions to play the quiz. 
+      This endpoint should take <category_id> as parameter 
+      and previous question <prev_q> as query parameter 
+      and return a random questions within the given category, 
+      if provided, and that is not one of the previous questions.
+    '''
     global remaining_questions
     
     prev_question_id = request.args.get('prev_q', None, type=int)
