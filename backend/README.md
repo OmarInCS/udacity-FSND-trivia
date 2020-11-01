@@ -46,6 +46,11 @@ To run the server, execute:
 export FLASK_APP=flaskr
 export FLASK_ENV=development
 flask run
+
+# on windows powershell
+$FLASK_APP="flaskr"
+$FLASK_ENV="development"
+flask run
 ```
 
 Setting the `FLASK_ENV` variable to `development` will detect file changes and restart the server automatically.
@@ -66,27 +71,140 @@ One note before you delve into your tasks: for each endpoint you are expected to
 8. Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions. 
 9. Create error handlers for all expected errors including 400, 404, 422 and 500. 
 
-REVIEW_COMMENT
+## Endpoints
+- GET '/categories'
+- GET '/questions'
+- GET '/categories/<category_id>/questions'
+- POST '/questions'
+- POST '/quizzes'
+- POST '/quizzes/<category_id>'
+- DELETE '/questions/<<int:question_id>>'
+
+> GET '/categories'
 ```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
-
-Endpoints
-GET '/categories'
-GET ...
-POST ...
-DELETE ...
-
-GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+- Fetches a list of categories
 - Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
+- Returns: A a JSON object like:
+{
+    'success': True, 
+    'categories': ["Science", "Art", "Geography", "History", "Entertainment", "Sports"],
+    'total_categories': 6
+}
+```
 
+> GET '/questions'
+```
+- Fetches a list of all questions
+- Request Arguments: None
+- Returns: A a JSON object like:
+{
+    'success': True,
+    'current_category': 'All',
+    'questions': [
+        {
+            'id': 1,
+            'question': 'who?',
+            'answer': 'Omar',
+            'category': 4,
+            'difficulty': 1
+        },
+        ...
+    ],
+    'total_questions': 2,
+    'categories': ["Science", "Art", "Geography", "History", "Entertainment", "Sports"]
+}
+```
+
+> GET '/categories/<category_id>/questions'
+```
+- Fetches a list of questions of a specific category
+- Request Arguments: category_id (str)
+- Returns: A a JSON object like:
+{
+    'success': True,
+    'current_category': 'All',
+    'questions': [
+        {
+            'id': 1,
+            'question': 'who?',
+            'answer': 'Omar',
+            'category': 4,
+            'difficulty': 1
+        },
+        ...
+    ],
+    'total_questions': 2,
+    'categories': ["Science", "Art", "Geography", "History", "Entertainment", "Sports"]
+}
+```
+
+> POST '/questions'
+```
+- get questions include a searching term or create a new question
+- Request Arguments: None
+- Request Body: {
+            'question': 'who?',
+            'answer': 'Omar',
+            'category': 4,
+            'difficulty': 1
+        }
+        or
+        {'searchTerm': 'movie'}
+- Returns: A a JSON object like:
+    {
+        'success': True,
+        'created': 15,
+        'total_questions': 15
+    }
+    Or
+    {
+        'success': True,
+        'questions': [{
+            'id': 1,
+            'question': 'who?',
+            'answer': 'Omar',
+            'category': 4,
+            'difficulty': 1
+        }, ...],
+        'total_questions': 15
+    }
+```
+> POST '/quizzes'
+
+> POST '/quizzes/<category_id>'
+```
+- Fetches a questions, which can be of a specific category
+- Request Arguments: optional category_id (str)
+- Query Arguments: prev_q the previous question id
+- Returns: A a JSON object like:
+    if still question:
+    {
+        'success': True,
+        'question': {
+            'id': 1,
+            'question': 'who?',
+            'answer': 'Omar',
+            'category': 4,
+            'difficulty': 1
+        },
+        'remaining_questions': 14
+    }
+    Or if done:
+    {
+        'success': True,
+        'done': True
+    }
+```
+
+> DELETE '/questions/<<int:question_id>>'
+```
+- Delete the question with the specified question ID
+- Request Arguments: question_id (int)
+- Returns: {
+        'success': True,
+        'deleted': 2,
+        'total_questions': 14
+    }
 ```
 
 
