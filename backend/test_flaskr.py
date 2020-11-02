@@ -115,7 +115,32 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['question'])
-        self.assertEqual(data['question']["category"], "1")
+        self.assertEqual(data['question']["category"], 1)
+
+    def test_get_paginated_questions_by_category_error(self):
+        res = self.client().get('/categories/100/questions')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 404)
+    
+    def test_delete_questions_error(self):
+        res = self.client().delete('/questions/100')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 404)
+
+    def test_create_new_question_error(self):
+        res = self.client().post('/questions', json={"question": "Unknown"})
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 422)
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":

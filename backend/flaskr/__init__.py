@@ -52,7 +52,7 @@ def create_app(test_config=None):
       return all categories in json format
     '''
     selection = Category.query.order_by(Category.id).all()
-    categories = [category.type for category in selection]
+    categories = {category.id: category.type for category in selection}
 
     if len(selection) == 0:
       abort(404)
@@ -147,23 +147,20 @@ def create_app(test_config=None):
     '''
       This endpoint to DELETE question using a question ID.
     '''
-    try:
-      question = Question.query.filter(Question.id == question_id).one_or_none()
+    
+    question = Question.query.filter(Question.id == question_id).one_or_none()
+    
+    if question is None:
+      abort(404)
 
-      if question is None:
-        abort(404)
+    question.delete()
 
-      question.delete()
-
-      return jsonify({
-        'success': True,
-        'deleted': question_id,
-        'total_questions': Question.query.count()
-      })
-
-    except Exception as ex:
-      print(ex)
-      abort(422)
+    return jsonify({
+      'success': True,
+      'deleted': question_id,
+      'total_questions': Question.query.count()
+    })
+    
 
   '''
   @TODO: 

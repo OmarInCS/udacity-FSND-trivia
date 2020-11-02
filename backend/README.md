@@ -87,7 +87,14 @@ One note before you delve into your tasks: for each endpoint you are expected to
 - Returns: A a JSON object like:
 {
     'success': True, 
-    'categories': ["Science", "Art", "Geography", "History", "Entertainment", "Sports"],
+    'categories': {
+        "1":"Science", 
+        "2": "Art", 
+        "3": "Geography", 
+        "4": "History", 
+        "5": "Entertainment", 
+        "6": "Sports"
+    },
     'total_categories': 6
 }
 ```
