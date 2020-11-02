@@ -182,7 +182,10 @@ One note before you delve into your tasks: for each endpoint you are expected to
 ```
 - Fetches a questions, which can be of a specific category
 - Request Arguments: optional category_id (str)
-- Query Arguments: prev_q the previous question id
+- Request Body: A a JSON object like:
+    {
+        "previous_questions": [2, 4]
+    }
 - Returns: A a JSON object like:
     if still question:
     {
@@ -193,8 +196,7 @@ One note before you delve into your tasks: for each endpoint you are expected to
             'answer': 'Omar',
             'category': 4,
             'difficulty': 1
-        },
-        'remaining_questions': 14
+        }
     }
     Or if done:
     {

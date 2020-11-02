@@ -25,6 +25,10 @@ class TriviaTestCase(unittest.TestCase):
             "difficulty": 1
         }
 
+        self.play_data = {
+            "previous_questions": [2, 4]
+        }
+
         # binds the app to the current context
         with self.app.app_context():
             self.db = SQLAlchemy()
@@ -101,7 +105,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(len(data['questions']), 0)
 
     def test_get_question(self):
-        res = self.client().post('/quizzes')
+        res = self.client().post('/quizzes', json=self.play_data)
         data = json.loads(res.data)
         
         self.assertEqual(res.status_code, 200)
@@ -109,13 +113,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['question'])
 
     def test_get_question_from_category(self):
-        res = self.client().post('/quizzes/1')
+        res = self.client().post('/quizzes/5', json=self.play_data)
         data = json.loads(res.data)
         
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['question'])
-        self.assertEqual(data['question']["category"], 1)
+        self.assertEqual(data['question']["category"], 5)
+        self.assertNotIn(data['question']["id"], [2, 4])
 
     def test_get_paginated_questions_by_category_error(self):
         res = self.client().get('/categories/100/questions')

@@ -7,7 +7,6 @@ import random
 from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
-remaining_questions = set()
 
 def paginate_questions(request, selection):
   page = request.args.get('page', 1, type=int)
@@ -83,9 +82,7 @@ def create_app(test_config=None):
       number of total questions, current category, categories.
       including pagination (every 10 questions).
     '''
-    response = {
-      'success': True
-    }
+    response = {}
     
     selection = Question.query.order_by(Question.id).all()
     response["current_category"] = "All"
@@ -100,7 +97,10 @@ def create_app(test_config=None):
     if len(response["questions"]) == 0:
       abort(404)
 
-    return jsonify(response)
+    return jsonify({
+      'success': True,
+      **response
+    })
 
   @app.route('/categories/<category_id>/questions')
   def get_category_questions(category_id):
@@ -246,22 +246,20 @@ def create_app(test_config=None):
       and return a random questions within the given category, 
       if provided, and that is not one of the previous questions.
     '''
-    global remaining_questions
-    
-    prev_question_id = request.args.get('prev_q', None, type=int)
-    if prev_question_id is None:
-      if category_id is None:
-        remaining_questions = set(Question.query.all())
-      else:
-        remaining_questions = set(Question.query.filter(Question.category == category_id).all())
-    
-    if len(remaining_questions):
-      question = remaining_questions.pop()
+    body = request.get_json()
       
+    prev_questions = body.get('previous_questions', [])
+    
+    if category_id is None:
+      question = Question.query.filter(~Question.id.in_(prev_questions)).first()
+    else:
+      question = Question.query.filter(Question.category == category_id, ~Question.id.in_(prev_questions)).first()
+    
+    if question:
+
       return jsonify({
         'success': True,
         'question': question.format(),
-        'remaining_questions': len(remaining_questions)
         })
     
     else:
